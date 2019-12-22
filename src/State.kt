@@ -5,7 +5,7 @@ import java.io.File
     var g = 0
     var h = 0
     var f = 0
-    var parent = State(0,0,0,field)
+    var parent: State? = null
     private var field = createMatrix(4,4,Tile(0, Image(File("images/0.jpg").toURI().toString())))
     fun getField(): Matrix<Tile>{
         return field

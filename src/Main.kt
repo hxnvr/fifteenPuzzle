@@ -17,20 +17,24 @@ class Main : Application() {
     val backfield = GameField()
     private val root = Pane()
     val matrix = backfield.field
-
-    val list = createTiles()
+    val list = listOf(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0)
     val open = mutableListOf<State>()
     val close = mutableSetOf<State>()
-    fun resMatrix(): Matrix<Any>{
-        val resmatrix = createMatrix(4,4,Any())
+
+
+    fun initial():State{
+        val initialState = State(0,0,0,matrix)
+        initialState.setField(matrix)
+        return initialState
+    }
+
+
+    fun resMatrix(): Matrix<Tile>{
+        val resmatrix = createMatrix(4,4, Tile(0,Image(File("images/0.jpg").toURI().toString())))
         var count = 0
         for (i in 0..3){
             for (j in 0..3){
-                if (i == 3 && j == 3 ) {
-                    resmatrix[j,i] = emptyTile
-                    break
-                }
-                resmatrix[j,i] = list[count]
+                resmatrix[i,j] = Tile(list[count], Image(File("images/${list[count]}.jpg").toURI().toString()))
                 count++
             }
         }
@@ -40,7 +44,7 @@ class Main : Application() {
 
     }
 
-    fun buttons() {
+  /*  fun buttons() {
         var emptyPos = Pair(3, 3)
         var emptyCoord = Pair(300.0, 300.0)
         down.setOnAction {
@@ -125,12 +129,10 @@ class Main : Application() {
         return root
     }
 
+   */
+
     override fun start(stage: Stage) {
-        stage.scene = Scene(createContent())
-        stage.show()
-        buttons()
-        resMatrix()
-        print(checknum(0, 0))
+        solver(initial())
     }
 
     companion object {
@@ -143,10 +145,10 @@ class Main : Application() {
         val resmatrix = resMatrix()
         for (i in 0..3){
             for (j in 0..3){
-                if (matrix[i,j] == resmatrix[i,j]) return true
+                if (matrix[i,j].number != resmatrix[i,j].number) return false
             }
         }
-        return false
+        return true
     }
 
     private fun createContent(): Pane {
@@ -155,14 +157,7 @@ class Main : Application() {
         return root
     }
 
-    fun checknum(i: Int, k: Int): Int {
 
-        val a = matrix[i, k]
-        return when (a) {
-            is Tile -> a.number
-            else -> 0
-        }
-    }
 
     fun drawTiles(i: Int, k: Int): Image {
         val a = matrix[i, k]
@@ -199,7 +194,8 @@ class Main : Application() {
     }
     fun moveDown(matrix: Matrix<Tile>): Matrix<Tile>{
         var zeroPos = Pair(0,0)
-        val newMatrix = createMatrix(4,4, Tile(0, Image(File("images/0.jpg").toURI().toString())))
+        val newMatrix = matrix
+
         for (i in 0 until matrix.width){
             for (j in 0 until matrix.height){
                 if (matrix[i,j].number == 0) zeroPos = Pair(i,j)
@@ -214,7 +210,8 @@ class Main : Application() {
     }
     fun moveUp(matrix: Matrix<Tile>): Matrix<Tile>{
         var zeroPos = Pair(0,0)
-        val newMatrix = createMatrix(4,4, Tile(0, Image(File("images/0.jpg").toURI().toString())))
+        val newMatrix = matrix
+
         for (i in 0 until matrix.width){
             for (j in 0 until matrix.height){
                 if (matrix[i,j].number == 0) zeroPos = Pair(i,j)
@@ -229,7 +226,8 @@ class Main : Application() {
     }
     fun moveLeft(matrix: Matrix<Tile>): Matrix<Tile>{
         var zeroPos = Pair(0,0)
-        val newMatrix = createMatrix(4,4, Tile(0, Image(File("images/0.jpg").toURI().toString())))
+        val newMatrix = matrix
+
         for (i in 0 until matrix.width){
             for (j in 0 until matrix.height){
                 if (matrix[i,j].number == 0) zeroPos = Pair(i,j)
@@ -244,7 +242,7 @@ class Main : Application() {
     }
     fun moveRight(matrix: Matrix<Tile>): Matrix<Tile>{
         var zeroPos = Pair(0,0)
-        val newMatrix = createMatrix(4,4, Tile(0, Image(File("images/0.jpg").toURI().toString())))
+        val newMatrix = matrix
         for (i in 0 until matrix.width){
             for (j in 0 until matrix.height){
                 if (matrix[i,j].number == 0) zeroPos = Pair(i,j)
@@ -274,6 +272,7 @@ class Main : Application() {
     }
     fun findMinF(open : List<State>): State{
         var result = State(0,0,0, matrix)
+        result.setField(matrix)
         var min = 0
         for (state in open){
             if (state.f < min){
@@ -283,40 +282,53 @@ class Main : Application() {
         }
         return result
     }
+
+
+
+
+    fun theEnd(){
+        print("Я ЗАКОНЧИЛ")
+    }
     fun getNeighbors(state: State): Set<State>{
         val res = mutableSetOf<State>()
         val currentMatrix = state.getField()
-        val neighbor1 = moveDown(currentMatrix)
-        val neighbor2 = moveUp(currentMatrix)
-        val neighbor3 = moveLeft(currentMatrix)
-        val neighbor4 = moveRight(currentMatrix)
-        res.add(State(0,0,0,moveDown(currentMatrix)))
-        res.add(State(0,0,0,moveLeft(currentMatrix)))
-        res.add(State(0,0,0,moveUp(currentMatrix)))
-        res.add(State(0,0,0,moveRight(currentMatrix)))
-        for (neighbor in res){
-            if(neighbor.getField() == currentMatrix) res.remove(neighbor)
-        }
+        if(moveDown(currentMatrix) != currentMatrix) res.add(State(0,0,0,moveDown(currentMatrix)))
+        if(moveLeft(currentMatrix) != currentMatrix) res.add(State(0,0,0,moveLeft(currentMatrix)))
+        if(moveUp(currentMatrix) != currentMatrix) res.add(State(0,0,0,moveUp(currentMatrix)))
+        if(moveRight(currentMatrix) != currentMatrix) res.add(State(0,0,0,moveRight(currentMatrix)))
         return res
      }
     fun solver(startState: State){
+        var prov = false
         open.add(startState)
         startState.g = 0
         startState.h = getH(startState)
         startState.f = startState.g + startState.h
         while (open.isNotEmpty()){
             val current = findMinF(open)
-            if (isSolved(current.getField())) TODO()
-            open.remove(current)
+            println("сделал шаг")
+            if (isSolved(current.getField())) {
+                theEnd()
+                break
+            }
+            open.minus(current)
             close.add(current)
             val neighbors = getNeighbors(current)
-            for (neighbor in neighbors){
-                for (close in close){
-                    if(close.getField() == neighbor.getField())
-                        continue
+            for (neighbor in neighbors) {
+                for (close in close) {
+                    if (close.getField() == neighbor.getField())
+                        prov = true
                 }
+                if (!prov) {
+                neighbor.parent = current
+                neighbor.g = current.g + 1
+                neighbor.h = getH(neighbor)
+                neighbor.f = neighbor.g + neighbor.h
+                open.add(neighbor)
+            }
 
             }
+            prov = false
         }
     }
 }
