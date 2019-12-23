@@ -45,9 +45,9 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
         array[cell.row][cell.column] = value
     }
 
-    override fun equals(other: Any?) =
-        (other is MatrixImpl<*>) && (height == other.height) && (width == other.width)
-
+    override fun equals(other: Any?):Boolean {
+        return (other is MatrixImpl<*>) && (height == other.height) && (width == other.width)
+    }
     override fun toString(): String {
         val sb = StringBuilder()
         sb.append("[")

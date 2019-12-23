@@ -7,7 +7,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.text.Font
 import javafx.stage.Stage
 import java.io.File
-
+/** В комментариях код для GUI**/
 class Main : Application() {
     val emptyTile = Tile(0, Image(File("images/0.jpg").toURI().toString()))
     private val up = Button("UP")
@@ -20,7 +20,7 @@ class Main : Application() {
     val list = listOf(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0)
     val open = mutableListOf<State>()
     val close = mutableSetOf<State>()
-
+    val resState = State(0,0,0,resMatrix())
 
     fun initial():State{
         val initialState = State(0,0,0,matrix)
@@ -32,19 +32,17 @@ class Main : Application() {
     fun resMatrix(): Matrix<Tile>{
         val resmatrix = createMatrix(4,4, Tile(0,Image(File("images/0.jpg").toURI().toString())))
         var count = 0
-        for (i in 0..3){
-            for (j in 0..3){
+        for (j in 0..3){
+            for (i in 0..3){
                 resmatrix[i,j] = Tile(list[count], Image(File("images/${list[count]}.jpg").toURI().toString()))
                 count++
             }
         }
         return resmatrix
     }
-    fun movement(){
 
-    }
 
-  /*  fun buttons() {
+  /** fun buttons() {
         var emptyPos = Pair(3, 3)
         var emptyCoord = Pair(300.0, 300.0)
         down.setOnAction {
@@ -129,7 +127,7 @@ class Main : Application() {
         return root
     }
 
-   */
+   **/
 
     override fun start(stage: Stage) {
         solver(initial())
@@ -141,16 +139,11 @@ class Main : Application() {
             launch(Main::class.java)
         }
     }
-    fun isSolved(matrix: Matrix<Tile>):Boolean{
-        val resmatrix = resMatrix()
-        for (i in 0..3){
-            for (j in 0..3){
-                if (matrix[i,j].number != resmatrix[i,j].number) return false
-            }
-        }
-        return true
+    fun isSolved(state: State):Boolean{
+        if (state.equals(resState)) return true
+        return false
     }
-
+/**
     private fun createContent(): Pane {
         root.setPrefSize(600.0, 400.0)
         draw()
@@ -192,9 +185,11 @@ class Main : Application() {
         right.layoutY = 125.0
         root.children.add(right)
     }
+
+ **/
     fun moveDown(matrix: Matrix<Tile>): Matrix<Tile>{
         var zeroPos = Pair(0,0)
-        val newMatrix = matrix
+        val newMatrix = createMatrix(4,4,emptyTile)
 
         for (i in 0 until matrix.width){
             for (j in 0 until matrix.height){
@@ -202,7 +197,7 @@ class Main : Application() {
                 newMatrix[i,j] = matrix[i,j]
             }
         }
-        if (zeroPos.second < 3){
+        if (zeroPos.second <3){
         val hr = newMatrix[zeroPos.first, zeroPos.second]
         newMatrix[zeroPos.first, zeroPos.second] = newMatrix[zeroPos.first, zeroPos.second + 1]
         newMatrix[zeroPos.first, zeroPos.second + 1] = hr}
@@ -210,7 +205,7 @@ class Main : Application() {
     }
     fun moveUp(matrix: Matrix<Tile>): Matrix<Tile>{
         var zeroPos = Pair(0,0)
-        val newMatrix = matrix
+        val newMatrix = createMatrix(4,4,emptyTile)
 
         for (i in 0 until matrix.width){
             for (j in 0 until matrix.height){
@@ -226,7 +221,7 @@ class Main : Application() {
     }
     fun moveLeft(matrix: Matrix<Tile>): Matrix<Tile>{
         var zeroPos = Pair(0,0)
-        val newMatrix = matrix
+        val newMatrix = createMatrix(4,4,emptyTile)
 
         for (i in 0 until matrix.width){
             for (j in 0 until matrix.height){
@@ -242,7 +237,7 @@ class Main : Application() {
     }
     fun moveRight(matrix: Matrix<Tile>): Matrix<Tile>{
         var zeroPos = Pair(0,0)
-        val newMatrix = matrix
+        val newMatrix = createMatrix(4,4,emptyTile)
         for (i in 0 until matrix.width){
             for (j in 0 until matrix.height){
                 if (matrix[i,j].number == 0) zeroPos = Pair(i,j)
@@ -287,15 +282,36 @@ class Main : Application() {
 
 
     fun theEnd(){
-        print("Я ЗАКОНЧИЛ")
+        print("done")
     }
     fun getNeighbors(state: State): Set<State>{
         val res = mutableSetOf<State>()
         val currentMatrix = state.getField()
-        if(moveDown(currentMatrix) != currentMatrix) res.add(State(0,0,0,moveDown(currentMatrix)))
-        if(moveLeft(currentMatrix) != currentMatrix) res.add(State(0,0,0,moveLeft(currentMatrix)))
-        if(moveUp(currentMatrix) != currentMatrix) res.add(State(0,0,0,moveUp(currentMatrix)))
-        if(moveRight(currentMatrix) != currentMatrix) res.add(State(0,0,0,moveRight(currentMatrix)))
+        val down = moveDown(currentMatrix)
+        val up = moveUp(currentMatrix)
+        val right = moveRight(currentMatrix)
+        val left = moveLeft(currentMatrix)
+        for (i in 0..3){
+            for (j in 0..3){
+                if (down[i,j].number != currentMatrix[i,j].number) {
+                    res.add(State(0,0,0,down))
+                    break
+                }
+                if (up[i,j].number != currentMatrix[i,j].number) {
+                    res.add(State(0,0,0,up))
+                    break
+                }
+                if (left[i,j].number != currentMatrix[i,j].number) {
+                    res.add(State(0,0,0,left))
+                    break
+                }
+                if (right[i,j].number != currentMatrix[i,j].number) {
+                    res.add(State(0,0,0, right))
+                    break
+                }
+            }
+        }
+
         return res
      }
     fun solver(startState: State){
@@ -307,16 +323,17 @@ class Main : Application() {
         while (open.isNotEmpty()){
             val current = findMinF(open)
             println("сделал шаг")
-            if (isSolved(current.getField())) {
+            if (isSolved(current) && open.isEmpty()) {
                 theEnd()
                 break
             }
-            open.minus(current)
+            var itinopen = open.filter { it.equals(current) }[0]
+           open.remove(itinopen)
             close.add(current)
             val neighbors = getNeighbors(current)
             for (neighbor in neighbors) {
                 for (close in close) {
-                    if (close.getField() == neighbor.getField())
+                    if (close.equals(neighbor))
                         prov = true
                 }
                 if (!prov) {

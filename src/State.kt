@@ -14,4 +14,12 @@ import java.io.File
         this.field = field
     }
 
+     fun equals(other: State): Boolean {
+         for (i in 0..3){
+             for (j in 0..3)
+                 if (this.field[i,j] != other.field[i,j])
+                     return false
+         }
+         return true
+     }
 }
