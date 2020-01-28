@@ -19,104 +19,12 @@ class Main : Application() {
     val matrix = backfield.field
     val list = listOf(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0)
 
-
-
+    
     fun initial():State{
         val initialState = State(0,0,0,matrix)
         initialState.setField(matrix)
         return initialState
     }
-
-
-
-
-
-  /** fun buttons() {
-        var emptyPos = Pair(3, 3)
-        var emptyCoord = Pair(300.0, 300.0)
-        down.setOnAction {
-            if (emptyCoord.second > 0.0) {
-                val emptyTile = emptyTile
-                val tile = matrix[emptyPos.first, emptyPos.second - 1]
-                val img = ImageView(tile.image)
-                img.x = emptyCoord.first
-                img.y = emptyCoord.second
-                root.children.add(img)
-                val imgEmpty = ImageView(emptyTile.image)
-                imgEmpty.x = emptyCoord.first
-                imgEmpty.y = emptyCoord.second - 100.0
-                root.children.add(imgEmpty)
-                matrix[emptyPos.first, emptyPos.second] = matrix[emptyPos.first, emptyPos.second - 1]
-                matrix[emptyPos.first, emptyPos.second - 1] = matrix[emptyPos.first, emptyPos.second]
-                emptyPos = Pair(emptyPos.first, emptyPos.second - 1)
-                emptyCoord = Pair(emptyCoord.first, emptyCoord.second - 100)
-                if (isSolved(matrix)) end()
-            }
-        }
-        up.setOnAction {
-            if (emptyCoord.second < 300.0) {
-                val emptyTile = emptyTile
-                val tile = matrix[emptyPos.first, emptyPos.second + 1] as Tile
-                val img = ImageView(tile.image)
-                img.x = emptyCoord.first
-                img.y = emptyCoord.second
-                root.children.add(img)
-                val imgEmpty = ImageView(emptyTile.image)
-                imgEmpty.x = emptyCoord.first
-                imgEmpty.y = emptyCoord.second + 100.0
-                root.children.add(imgEmpty)
-                matrix[emptyPos.first, emptyPos.second] = matrix[emptyPos.first, emptyPos.second + 1]
-                matrix[emptyPos.first, emptyPos.second + 1] = matrix[emptyPos.first, emptyPos.second]
-                emptyPos = Pair(emptyPos.first, emptyPos.second + 1)
-                emptyCoord = Pair(emptyCoord.first, emptyCoord.second + 100)
-                if (isSolved(matrix)) end()
-            }
-        }
-        right.setOnAction {
-            if (emptyCoord.first > 0.0) {
-                val emptyTile = emptyTile
-                val tile = matrix[emptyPos.first - 1, emptyPos.second] as Tile
-                val img = ImageView(tile.image)
-                img.x = emptyCoord.first
-                img.y = emptyCoord.second
-                root.children.add(img)
-                val imgEmpty = ImageView(emptyTile.image)
-                imgEmpty.x = emptyCoord.first - 100.0
-                imgEmpty.y = emptyCoord.second
-                root.children.add(imgEmpty)
-                matrix[emptyPos.first, emptyPos.second] = matrix[emptyPos.first - 1, emptyPos.second]
-                matrix[emptyPos.first - 1, emptyPos.second] = matrix[emptyPos.first, emptyPos.second]
-                emptyPos = Pair(emptyPos.first - 1, emptyPos.second)
-                emptyCoord = Pair(emptyCoord.first - 100.0, emptyCoord.second)
-                if (isSolved(matrix)) end()
-            }
-        }
-        left.setOnAction {
-            if (emptyCoord.first < 300.0) {
-                val emptyTile = emptyTile
-                val tile = matrix[emptyPos.first + 1, emptyPos.second] as Tile
-                val img = ImageView(tile.image)
-                img.x = emptyCoord.first
-                img.y = emptyCoord.second
-                root.children.add(img)
-                val imgEmpty = ImageView(emptyTile.image)
-                imgEmpty.x = emptyCoord.first + 100.0
-                imgEmpty.y = emptyCoord.second
-                root.children.add(imgEmpty)
-                matrix[emptyPos.first, emptyPos.second] = matrix[emptyPos.first + 1, emptyPos.second]
-                matrix[emptyPos.first + 1, emptyPos.second] = matrix[emptyPos.first, emptyPos.second]
-                emptyPos = Pair(emptyPos.first + 1, emptyPos.second)
-                emptyCoord = Pair(emptyCoord.first + 100.0, emptyCoord.second)
-                if (isSolved(matrix)) end()
-            }
-        }
-    }
-    private fun end(): Pane{
-        root.children.clear()
-        return root
-    }
-
-   **/
 
     override fun start(stage: Stage) {
         solver(initial())
@@ -142,50 +50,7 @@ class Main : Application() {
         if (state.equals(resState)) return true
         return false
     }
-/**
-    private fun createContent(): Pane {
-        root.setPrefSize(600.0, 400.0)
-        draw()
-        return root
-    }
 
-
-
-    fun drawTiles(i: Int, k: Int): Image {
-        val a = matrix[i, k]
-        return when (a) {
-            is Tile -> a.image
-            else -> Image(File("images/empty.jpg").toURI().toString())
-        }
-    }
-
-    fun draw() {
-        var x: Double
-        var y: Double
-        for (i in 0..3)
-            for (k in 0..3) {
-                val imgv = ImageView(drawTiles(i, k))
-                x = 100.0 * i
-                y = 100.0 * k
-                imgv.x = x
-                imgv.y = y
-                root.children.add(imgv)
-            }
-        up.layoutX = 500.0
-        up.layoutY = 100.0
-        root.children.add(up)
-        down.layoutX = 485.0
-        down.layoutY = 150.0
-        root.children.add(down)
-        left.layoutX = 450.0
-        left.layoutY = 125.0
-        root.children.add(left)
-        right.layoutX = 540.0
-        right.layoutY = 125.0
-        root.children.add(right)
-    }
-
- **/
     fun moveDown(matrix: Matrix<Tile>): Matrix<Tile>{
         var zeroPos = Pair(0,0)
         val newMatrix = createMatrix(4,4,emptyTile)
@@ -264,6 +129,7 @@ class Main : Application() {
         }
         return h
     }
+
     fun findMinF(open : List<State>): State{
         var result = State(0,0,0, matrix)
         result.setField(matrix)
@@ -278,11 +144,10 @@ class Main : Application() {
     }
 
 
-
-
     fun theEnd(){
         print("done")
     }
+
     fun getNeighbors(state: State): Set<State>{
         val res = mutableSetOf<State>()
         val currentMatrix = state.getField()
@@ -332,11 +197,167 @@ class Main : Application() {
                 neighbor.h = getH(neighbor)
                 neighbor.f = neighbor.g + neighbor.h
                 open.add(neighbor)
-                    prov = false
+
             }
+                prov = false
             }
             currentG++
-
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+    private fun createContent(): Pane {
+    root.setPrefSize(600.0, 400.0)
+    draw()
+    return root
+    }
+
+
+
+    fun drawTiles(i: Int, k: Int): Image {
+    val a = matrix[i, k]
+    return when (a) {
+    is Tile -> a.image
+    else -> Image(File("images/empty.jpg").toURI().toString())
+    }
+    }
+
+    fun draw() {
+    var x: Double
+    var y: Double
+    for (i in 0..3)
+    for (k in 0..3) {
+    val imgv = ImageView(drawTiles(i, k))
+    x = 100.0 * i
+    y = 100.0 * k
+    imgv.x = x
+    imgv.y = y
+    root.children.add(imgv)
+    }
+    up.layoutX = 500.0
+    up.layoutY = 100.0
+    root.children.add(up)
+    down.layoutX = 485.0
+    down.layoutY = 150.0
+    root.children.add(down)
+    left.layoutX = 450.0
+    left.layoutY = 125.0
+    root.children.add(left)
+    right.layoutX = 540.0
+    right.layoutY = 125.0
+    root.children.add(right)
+    }
+
+     **/
+
+
+
+    /** fun buttons() {
+    var emptyPos = Pair(3, 3)
+    var emptyCoord = Pair(300.0, 300.0)
+    down.setOnAction {
+    if (emptyCoord.second > 0.0) {
+    val emptyTile = emptyTile
+    val tile = matrix[emptyPos.first, emptyPos.second - 1]
+    val img = ImageView(tile.image)
+    img.x = emptyCoord.first
+    img.y = emptyCoord.second
+    root.children.add(img)
+    val imgEmpty = ImageView(emptyTile.image)
+    imgEmpty.x = emptyCoord.first
+    imgEmpty.y = emptyCoord.second - 100.0
+    root.children.add(imgEmpty)
+    matrix[emptyPos.first, emptyPos.second] = matrix[emptyPos.first, emptyPos.second - 1]
+    matrix[emptyPos.first, emptyPos.second - 1] = matrix[emptyPos.first, emptyPos.second]
+    emptyPos = Pair(emptyPos.first, emptyPos.second - 1)
+    emptyCoord = Pair(emptyCoord.first, emptyCoord.second - 100)
+    if (isSolved(matrix)) end()
+    }
+    }
+    up.setOnAction {
+    if (emptyCoord.second < 300.0) {
+    val emptyTile = emptyTile
+    val tile = matrix[emptyPos.first, emptyPos.second + 1] as Tile
+    val img = ImageView(tile.image)
+    img.x = emptyCoord.first
+    img.y = emptyCoord.second
+    root.children.add(img)
+    val imgEmpty = ImageView(emptyTile.image)
+    imgEmpty.x = emptyCoord.first
+    imgEmpty.y = emptyCoord.second + 100.0
+    root.children.add(imgEmpty)
+    matrix[emptyPos.first, emptyPos.second] = matrix[emptyPos.first, emptyPos.second + 1]
+    matrix[emptyPos.first, emptyPos.second + 1] = matrix[emptyPos.first, emptyPos.second]
+    emptyPos = Pair(emptyPos.first, emptyPos.second + 1)
+    emptyCoord = Pair(emptyCoord.first, emptyCoord.second + 100)
+    if (isSolved(matrix)) end()
+    }
+    }
+    right.setOnAction {
+    if (emptyCoord.first > 0.0) {
+    val emptyTile = emptyTile
+    val tile = matrix[emptyPos.first - 1, emptyPos.second] as Tile
+    val img = ImageView(tile.image)
+    img.x = emptyCoord.first
+    img.y = emptyCoord.second
+    root.children.add(img)
+    val imgEmpty = ImageView(emptyTile.image)
+    imgEmpty.x = emptyCoord.first - 100.0
+    imgEmpty.y = emptyCoord.second
+    root.children.add(imgEmpty)
+    matrix[emptyPos.first, emptyPos.second] = matrix[emptyPos.first - 1, emptyPos.second]
+    matrix[emptyPos.first - 1, emptyPos.second] = matrix[emptyPos.first, emptyPos.second]
+    emptyPos = Pair(emptyPos.first - 1, emptyPos.second)
+    emptyCoord = Pair(emptyCoord.first - 100.0, emptyCoord.second)
+    if (isSolved(matrix)) end()
+    }
+    }
+    left.setOnAction {
+    if (emptyCoord.first < 300.0) {
+    val emptyTile = emptyTile
+    val tile = matrix[emptyPos.first + 1, emptyPos.second] as Tile
+    val img = ImageView(tile.image)
+    img.x = emptyCoord.first
+    img.y = emptyCoord.second
+    root.children.add(img)
+    val imgEmpty = ImageView(emptyTile.image)
+    imgEmpty.x = emptyCoord.first + 100.0
+    imgEmpty.y = emptyCoord.second
+    root.children.add(imgEmpty)
+    matrix[emptyPos.first, emptyPos.second] = matrix[emptyPos.first + 1, emptyPos.second]
+    matrix[emptyPos.first + 1, emptyPos.second] = matrix[emptyPos.first, emptyPos.second]
+    emptyPos = Pair(emptyPos.first + 1, emptyPos.second)
+    emptyCoord = Pair(emptyCoord.first + 100.0, emptyCoord.second)
+    if (isSolved(matrix)) end()
+    }
+    }
+    }
+    private fun end(): Pane{
+    root.children.clear()
+    return root
+    }
+
+     **/
 }
