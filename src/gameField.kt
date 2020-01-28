@@ -3,7 +3,7 @@ import java.io.File
 
 class GameField {
     val field = createMatrix(4, 4, Tile(0, Image(File("images/0.jpg").toURI().toString())))
-    val list = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15)
+    val list = listOf( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0, 12, 13, 14, 11, 15)
     val list2 = createTiles().shuffled().toMutableList()
     init{
         var count = 0

@@ -18,9 +18,8 @@ class Main : Application() {
     private val root = Pane()
     val matrix = backfield.field
     val list = listOf(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0)
-    val open = mutableListOf<State>()
-    val close = mutableSetOf<State>()
-    val resState = State(0,0,0,resMatrix())
+
+
 
     fun initial():State{
         val initialState = State(0,0,0,matrix)
@@ -29,17 +28,7 @@ class Main : Application() {
     }
 
 
-    fun resMatrix(): Matrix<Tile>{
-        val resmatrix = createMatrix(4,4, Tile(0,Image(File("images/0.jpg").toURI().toString())))
-        var count = 0
-        for (j in 0..3){
-            for (i in 0..3){
-                resmatrix[i,j] = Tile(list[count], Image(File("images/${list[count]}.jpg").toURI().toString()))
-                count++
-            }
-        }
-        return resmatrix
-    }
+
 
 
   /** fun buttons() {
@@ -140,6 +129,16 @@ class Main : Application() {
         }
     }
     fun isSolved(state: State):Boolean{
+        val resmatrix = createMatrix(4,4, Tile(0,Image(File("images/0.jpg").toURI().toString())))
+        var count = 0
+        for (j in 0..3){
+            for (i in 0..3){
+                resmatrix[i,j] = Tile(list[count], Image(File("images/${list[count]}.jpg").toURI().toString()))
+                count++
+            }
+        }
+        val resState = State(0,0,0, resmatrix)
+        resState.setField(resmatrix)
         if (state.equals(resState)) return true
         return false
     }
@@ -197,7 +196,7 @@ class Main : Application() {
                 newMatrix[i,j] = matrix[i,j]
             }
         }
-        if (zeroPos.second <3){
+        if (zeroPos.second < 3){
         val hr = newMatrix[zeroPos.first, zeroPos.second]
         newMatrix[zeroPos.first, zeroPos.second] = newMatrix[zeroPos.first, zeroPos.second + 1]
         newMatrix[zeroPos.first, zeroPos.second + 1] = hr}
@@ -257,7 +256,7 @@ class Main : Application() {
         for(i in 0 until matrix.height){
             for (j in 0 until matrix.width) {
                 if (matrix[i, j].number != 0) {
-                    if (matrix[i, j].number != i * matrix.height + j + 1) h++
+                    if (matrix[i, j].number != j * matrix.width + i + 1) h++
                 } else {
                     if (j != 3 && i != 3) h++
                 }
@@ -268,7 +267,7 @@ class Main : Application() {
     fun findMinF(open : List<State>): State{
         var result = State(0,0,0, matrix)
         result.setField(matrix)
-        var min = 0
+        var min = 999
         for (state in open){
             if (state.f < min){
                 min = state.f
@@ -287,65 +286,57 @@ class Main : Application() {
     fun getNeighbors(state: State): Set<State>{
         val res = mutableSetOf<State>()
         val currentMatrix = state.getField()
-        val down = moveDown(currentMatrix)
-        val up = moveUp(currentMatrix)
-        val right = moveRight(currentMatrix)
-        val left = moveLeft(currentMatrix)
-        for (i in 0..3){
-            for (j in 0..3){
-                if (down[i,j].number != currentMatrix[i,j].number) {
-                    res.add(State(0,0,0,down))
-                    break
-                }
-                if (up[i,j].number != currentMatrix[i,j].number) {
-                    res.add(State(0,0,0,up))
-                    break
-                }
-                if (left[i,j].number != currentMatrix[i,j].number) {
-                    res.add(State(0,0,0,left))
-                    break
-                }
-                if (right[i,j].number != currentMatrix[i,j].number) {
-                    res.add(State(0,0,0, right))
-                    break
-                }
-            }
-        }
-
+        val downState = State(0,0,0, matrix)
+        downState.setField(moveDown(currentMatrix))
+        if (!downState.equals(state)) res.add(downState)
+        val upState = State(0,0,0, matrix)
+        upState.setField(moveUp(currentMatrix))
+        if (!upState.equals(state)) res.add(upState)
+        val leftState = State(0,0,0, matrix)
+        leftState.setField(moveLeft(currentMatrix))
+        if (!leftState.equals(state)) res.add(leftState)
+        val rightState = State(0,0,0, matrix)
+        rightState.setField(moveRight(currentMatrix))
+        if (!rightState.equals(state)) res.add(rightState)
         return res
      }
+
     fun solver(startState: State){
+        val open = mutableListOf<State>()
+        val close = mutableSetOf<State>()
         var prov = false
+        var currentG = 0
         open.add(startState)
         startState.g = 0
         startState.h = getH(startState)
         startState.f = startState.g + startState.h
         while (open.isNotEmpty()){
             val current = findMinF(open)
-            println("сделал шаг")
-            if (isSolved(current) && open.isEmpty()) {
+            open.remove(open.filter { it.equals(current)}[0])
+
+            if (isSolved(current)) {
                 theEnd()
                 break
             }
-            var itinopen = open.filter { it.equals(current) }[0]
-           open.remove(itinopen)
             close.add(current)
             val neighbors = getNeighbors(current)
             for (neighbor in neighbors) {
-                for (close in close) {
-                    if (close.equals(neighbor))
+                for (closeOne in close) {
+                    if (closeOne.equals(neighbor)) {
                         prov = true
+                    }
                 }
                 if (!prov) {
                 neighbor.parent = current
-                neighbor.g = current.g + 1
+                neighbor.g = currentG + 1
                 neighbor.h = getH(neighbor)
                 neighbor.f = neighbor.g + neighbor.h
                 open.add(neighbor)
+                    prov = false
             }
+            }
+            currentG++
 
-            }
-            prov = false
         }
     }
 }

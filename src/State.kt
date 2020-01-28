@@ -17,7 +17,7 @@ import java.io.File
      fun equals(other: State): Boolean {
          for (i in 0..3){
              for (j in 0..3)
-                 if (this.field[i,j] != other.field[i,j])
+                 if (this.field[i,j].number != other.field[i,j].number)
                      return false
          }
          return true
