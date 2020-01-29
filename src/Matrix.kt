@@ -49,17 +49,13 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
         return (other is MatrixImpl<*>) && (height == other.height) && (width == other.width)
     }
     override fun toString(): String {
-        val sb = StringBuilder()
-        sb.append("[")
-        for (row in 0 until height) {
-            sb.append("[")
-            for (column in 0 until width) {
-                sb.append(this[row, column], ": ")
+        for (i in 0 until height) {
+            for (j in 0 until width) {
+                print(array[i][j].toString() + " ")
             }
-            sb.append("]")
+            println()
         }
-        sb.append("]")
-        return "$sb"
+        return ""
     }
 
     override fun hashCode(): Int {

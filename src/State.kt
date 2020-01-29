@@ -13,6 +13,15 @@ import java.io.File
     fun setField(field: Matrix<Tile>) {
         this.field = field
     }
+     override fun toString(): String {
+         for (i in 0 until field.height) {
+             for (j in 0 until field.width) {
+                 print(getField()[j, i].number.toString() + " ")
+             }
+             println()
+         }
+         return ""
+     }
 
      fun equals(other: State): Boolean {
          for (i in 0..3){

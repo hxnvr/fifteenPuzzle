@@ -7,6 +7,8 @@ import javafx.scene.layout.Pane
 import javafx.scene.text.Font
 import javafx.stage.Stage
 import java.io.File
+import java.util.*
+
 /** В комментариях код для GUI**/
 class Main : Application() {
     val emptyTile = Tile(0, Image(File("images/0.jpg").toURI().toString()))
@@ -144,8 +146,16 @@ class Main : Application() {
     }
 
 
-    fun theEnd(){
-        print("done")
+    fun theEnd(state: State){
+        val resQueue = ArrayDeque<State>()
+        if (state.parent != null){
+            resQueue.addFirst(state.parent!!)
+            theEnd(state.parent!!)
+        }
+        for (i in 0 until resQueue.size){
+            val last = resQueue.pop().toString()
+            println(last)
+        }
     }
 
     fun getNeighbors(state: State): Set<State>{
@@ -180,7 +190,8 @@ class Main : Application() {
             open.remove(open.filter { it.equals(current)}[0])
 
             if (isSolved(current)) {
-                theEnd()
+                theEnd(current)
+                println(current)
                 break
             }
             close.add(current)
