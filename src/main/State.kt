@@ -19,7 +19,11 @@ import java.io.File
      override fun toString(): String {
          for (i in 0 until field.height) {
              for (j in 0 until field.width) {
-                 print(getField()[j, i].number.toString() + " ")
+                 if (getField()[j,i].number < 10){
+                     print(" " + getField()[j, i].number.toString() + " ")
+                 } else {
+                     print(getField()[j, i].number.toString() + " ")
+                 }
              }
              println()
          }
