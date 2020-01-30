@@ -1,3 +1,5 @@
+package main
+
 import javafx.scene.image.Image
 import java.io.File
 
@@ -6,8 +8,9 @@ import java.io.File
     var h = 0
     var f = 0
     var parent: State? = null
-    private var field = createMatrix(4,4,Tile(0, Image(File("images/0.jpg").toURI().toString())))
-    fun getField(): Matrix<Tile>{
+    private var field =
+        createMatrix(4, 4, Tile(0, Image(File("images/0.jpg").toURI().toString())))
+    fun getField(): Matrix<Tile> {
         return field
     }
     fun setField(field: Matrix<Tile>) {
